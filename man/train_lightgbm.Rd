@@ -10,7 +10,7 @@ train_lightgbm(
   max_depth = -1,
   num_iterations = 100,
   learning_rate = 0.1,
-  feature_fraction = 1,
+  feature_fraction_bynode = 1,
   min_data_in_leaf = 20,
   min_gain_to_split = 0,
   bagging_fraction = 1,
@@ -32,7 +32,7 @@ train_lightgbm(
 
 \item{learning_rate}{A numeric value between zero and one to control the learning rate.}
 
-\item{feature_fraction}{Fraction of predictors that will be randomly sampled
+\item{feature_fraction_bynode}{Fraction of predictors that will be randomly sampled
 at each split.}
 
 \item{min_data_in_leaf}{A numeric value for the minimum sum of instances needed
@@ -41,7 +41,9 @@ in a child to continue to split.}
 \item{min_gain_to_split}{A number for the minimum loss reduction required to make a
 further partition on a leaf node of the tree.}
 
-\item{bagging_fraction}{Subsampling proportion of rows.}
+\item{bagging_fraction}{Subsampling proportion of rows. Setting this argument
+to a non-default value will also set \code{bagging_freq = 1}. See the Bagging
+section in \code{?details_boost_tree_lightgbm} for more details.}
 
 \item{early_stopping_rounds}{Number of iterations without an improvement in
 the objective function occur before training should be halted.}
@@ -49,7 +51,7 @@ the objective function occur before training should be halted.}
 \item{validation}{The \emph{proportion} of the training data that are used for
 performance assessment and potential early stopping.}
 
-\item{counts}{A logical; should \code{feature_fraction} be interpreted as the
+\item{counts}{A logical; should \code{feature_fraction_bynode} be interpreted as the
 \emph{number} of predictors that will be randomly sampled at each split?
 \code{TRUE} indicates that \code{mtry} will be interpreted in its sense as a \emph{count},
 \code{FALSE} indicates that the argument will be interpreted in its sense as a
