@@ -19,7 +19,7 @@
 #' @param bagging_fraction Subsampling proportion of rows. Setting this argument
 #'  to a non-default value will also set `bagging_freq = 1`. See the Bagging
 #'  section in `?details_boost_tree_lightgbm` for more details.
-#' @param early_stopping_rounds Number of iterations without an improvement in
+#' @param early_stopping_round Number of iterations without an improvement in
 #' the objective function occur before training should be halted.
 #' @param validation The _proportion_ of the training data that are used for
 #' performance assessment and potential early stopping.
@@ -38,7 +38,7 @@
 train_lightgbm <- function(x, y, max_depth = -1, num_iterations = 100, learning_rate = 0.1,
                            feature_fraction_bynode = 1, min_data_in_leaf = 20,
                            min_gain_to_split = 0, bagging_fraction = 1,
-                           early_stopping_rounds = NULL, validation = 0,
+                           early_stopping_round = NULL, validation = 0,
                            counts = TRUE, quiet = FALSE, ...) {
 
   force(x)
@@ -52,6 +52,8 @@ train_lightgbm <- function(x, y, max_depth = -1, num_iterations = 100, learning_
     process_mtry(feature_fraction_bynode = feature_fraction_bynode,
                  counts = counts, x = x, is_missing = missing(feature_fraction_bynode))
 
+  check_lightgbm_aliases(...)
+
   args <- list(
     param = list(
       num_iterations = num_iterations,
@@ -63,7 +65,7 @@ train_lightgbm <- function(x, y, max_depth = -1, num_iterations = 100, learning_
       bagging_fraction = bagging_fraction
     ),
     main = list(
-      early_stopping_rounds = early_stopping_rounds,
+      early_stopping_round = early_stopping_round,
       ...
     )
   )
@@ -79,7 +81,7 @@ train_lightgbm <- function(x, y, max_depth = -1, num_iterations = 100, learning_
   args <- process_bagging(args, ...)
 
   args <- process_data(args, x, y, validation, missing(validation),
-                       early_stopping_rounds)
+                       early_stopping_round)
 
   args <- sort_args(args)
 
@@ -178,8 +180,6 @@ process_parallelism <- function(args) {
   if (!is.null(args$main["num_threads"])) {
     args$param$num_threads <- args$main[names(args$main) == "num_threads"]
     args$main[names(args$main) == "num_threads"] <- NULL
-  } else {
-    args$param$num_threads <- foreach::getDoParWorkers()
   }
 
   args
@@ -195,7 +195,7 @@ process_bagging <- function(args, ...) {
 }
 
 process_data <- function(args, x, y, validation, missing_validation,
-                         early_stopping_rounds) {
+                         early_stopping_round) {
   #                                           trn_index       | val_index
   #                                         ----------------------------------
   #  needs_validation &  missing_validation | 1:n               1:n
@@ -204,7 +204,7 @@ process_data <- function(args, x, y, validation, missing_validation,
   # !needs_validation & !missing_validation | sample(1:n, m)    setdiff(trn_index, 1:n)
 
   n <- nrow(x)
-  needs_validation <- !is.null(early_stopping_rounds)
+  needs_validation <- !is.null(early_stopping_round)
 
   if (missing_validation) {
     trn_index <- 1:n
@@ -263,7 +263,7 @@ sort_args <- function(args) {
 
   # dots are deprecated in lgb.train -- pass to param instead
   to_main   <- c("nrounds", "eval", "verbose", "record", "eval_freq",
-                 "early_stopping_rounds", "data", "valids")
+                 "early_stopping_round", "data", "valids")
 
   args$param <- c(args$param, args$main[!names(args$main) %in% to_main])
 
@@ -420,3 +420,55 @@ categorical_features_to_int <- function(x, cat_indices){
   }
   x
 }
+
+check_lightgbm_aliases <- function(...) {
+  dots <- rlang::list2(...)
+
+  for (param in names(dots)) {
+    uses_alias <- lightgbm_aliases$alias %in% param
+    if (any(uses_alias)) {
+      main <- lightgbm_aliases$lightgbm[uses_alias]
+      parsnip <- lightgbm_aliases$parsnip[uses_alias]
+      cli::cli_abort(c(
+      "!" = "The {.var {param}} argument passed to \\
+             {.help [`set_engine()`](parsnip::set_engine)} is an alias for \\
+             a main model argument.",
+      "i" = "Please instead pass this argument via the {.var {parsnip}} \\
+             argument to {.help [`boost_tree()`](parsnip::boost_tree)}."
+      ), call = rlang::call2("fit"))
+    }
+  }
+
+  invisible(TRUE)
+}
+
+lightgbm_aliases <-
+  tibble::tribble(
+    ~parsnip,         ~lightgbm,                 ~alias,
+    # note that "tree_depth" -> "max_depth" has no aliases
+    "trees",          "num_iterations",          "num_iteration",
+    "trees",          "num_iterations",          "n_iter",
+    "trees",          "num_iterations",          "num_tree",
+    "trees",          "num_iterations",          "num_trees",
+    "trees",          "num_iterations",          "num_round",
+    "trees",          "num_iterations",          "num_rounds",
+    "trees",          "num_iterations",          "nrounds",
+    "trees",          "num_iterations",          "num_boost_round",
+    "trees",          "num_iterations",          "n_estimators",
+    "trees",          "num_iterations",          "max_iter",
+    "learn_rate",     "learning_rate",           "shrinkage_rate",
+    "learn_rate",     "learning_rate",           "eta",
+    "mtry",           "feature_fraction_bynode", "sub_feature_bynode",
+    "mtry",           "feature_fraction_bynode", "colsample_bynode",
+    "min_n",          "min_data_in_leaf",        "min_data_per_leaf",
+    "min_n",          "min_data_in_leaf",        "min_data",
+    "min_n",          "min_data_in_leaf",        "min_child_samples",
+    "min_n",          "min_data_in_leaf",        "min_samples_leaf",
+    "loss_reduction", "min_gain_to_split",       "min_split_gain",
+    "sample_size",    "bagging_fraction",        "sub_row",
+    "sample_size",    "bagging_fraction",        "subsample",
+    "sample_size",    "bagging_fraction",        "bagging",
+    "stop_iter",      "early_stopping_round",    "early_stopping_rounds",
+    "stop_iter",      "early_stopping_round",    "early_stopping",
+    "stop_iter",      "early_stopping_round",    "n_iter_no_change"
+  )

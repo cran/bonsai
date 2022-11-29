@@ -1,6 +1,6 @@
 Package: bonsai
 Title: Model Wrappers for Tree-Based Models
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
     person("Daniel", "Falbel", , "dfalbel@curso-r.com", role = "aut"),
     person("Athos", "Damiani", , "adamiani@curso-r.com", role = "aut"),
@@ -23,8 +23,7 @@ URL: https://bonsai.tidymodels.org/,
         https://github.com/tidymodels/bonsai
 BugReports: https://github.com/tidymodels/bonsai/issues
 Depends: parsnip (>= 1.0.1)
-Imports: dials, dplyr, foreach, glue, purrr, rlang, stats, tibble,
-        utils
+Imports: cli, dials, dplyr, glue, purrr, rlang, stats, tibble, utils
 Suggests: covr, knitr, lightgbm, modeldata, partykit, rmarkdown,
         rsample, testthat (>= 3.0.0), tune
 VignetteBuilder: knitr
@@ -33,7 +32,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2022-08-31 14:54:06 UTC; simoncouch
+Packaged: 2022-11-29 18:45:12 UTC; simoncouch
 Author: Daniel Falbel [aut],
   Athos Damiani [aut],
   Roel M. Hogervorst [aut] (<https://orcid.org/0000-0001-7509-0328>),
@@ -42,4 +41,4 @@ Author: Daniel Falbel [aut],
   RStudio [cph, fnd]
 Maintainer: Simon Couch <simonpatrickcouch@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-08-31 17:00:02 UTC
+Date/Publication: 2022-11-29 19:10:01 UTC
