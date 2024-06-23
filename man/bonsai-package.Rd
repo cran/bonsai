@@ -3,13 +3,12 @@
 \docType{package}
 \name{bonsai-package}
 \alias{bonsai-package}
-\alias{_PACKAGE}
 \alias{bonsai}
 \title{bonsai: Model Wrappers for Tree-Based Models}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Bindings for additional tree-based model engines for use with the 'parsnip' package. Models include gradient boosted decision trees with 'LightGBM' (Ke et al, 2017.) and conditional inference trees and conditional random forests with 'partykit' (Hothorn and Zeileis, 2015. and Hothorn et al, 2006. \doi{10.1198/106186006X133933}).
+Bindings for additional tree-based model engines for use with the 'parsnip' package. Models include gradient boosted decision trees with 'LightGBM' (Ke et al, 2017.), conditional inference trees and conditional random forests with 'partykit' (Hothorn and Zeileis, 2015. and Hothorn et al, 2006. \doi{10.1198/106186006X133933}), and accelerated oblique random forests with 'aorsf' (Jaeger et al, 2022 \doi{10.5281/zenodo.7116854}).
 }
 \seealso{
 Useful links:
@@ -21,19 +20,19 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Simon Couch \email{simonpatrickcouch@gmail.com} (\href{https://orcid.org/0000-0001-5676-5107}{ORCID})
+\strong{Maintainer}: Simon Couch \email{simon.couch@posit.co} (\href{https://orcid.org/0000-0001-5676-5107}{ORCID})
 
 Authors:
 \itemize{
   \item Daniel Falbel \email{dfalbel@curso-r.com}
   \item Athos Damiani \email{adamiani@curso-r.com}
   \item Roel M. Hogervorst \email{hogervorst.rm@gmail.com} (\href{https://orcid.org/0000-0001-7509-0328}{ORCID})
-  \item Max Kuhn \email{max@rstudio.com} (\href{https://orcid.org/0000-0003-2402-136X}{ORCID})
+  \item Max Kuhn \email{max@posit.co} (\href{https://orcid.org/0000-0003-2402-136X}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item RStudio [copyright holder, funder]
+  \item Posit Software, PBC [copyright holder, funder]
 }
 
 }
