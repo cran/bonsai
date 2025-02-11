@@ -1,3 +1,5 @@
+withr::local_envvar("OMP_THREAD_LIMIT" = 1)
+
 test_that("boost_tree with lightgbm",{
   skip_if_not_installed("lightgbm")
   skip_if_not_installed("modeldata")
@@ -19,7 +21,7 @@ test_that("boost_tree with lightgbm",{
   )
 
   # regression -----------------------------------------------------------------
-  expect_error_free({
+  expect_no_error({
     pars_fit_1 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -27,7 +29,7 @@ test_that("boost_tree with lightgbm",{
       fit(bill_length_mm ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_1 <-
       predict(pars_fit_1, penguins)
   })
@@ -68,7 +70,7 @@ test_that("boost_tree with lightgbm",{
 
 
   # regression, adjusting a primary argument
-  expect_error_free({
+  expect_no_error({
     pars_fit_2 <-
       boost_tree(trees = 20) %>%
       set_engine("lightgbm") %>%
@@ -76,7 +78,7 @@ test_that("boost_tree with lightgbm",{
       fit(bill_length_mm ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_2 <-
       predict(pars_fit_2, penguins)
   })
@@ -98,7 +100,7 @@ test_that("boost_tree with lightgbm",{
   expect_equal(pars_preds_2$.pred, lgbm_preds_2)
 
   # regression, adjusting an engine argument
-  expect_error_free({
+  expect_no_error({
     pars_fit_3 <-
       boost_tree() %>%
       set_engine("lightgbm", lambda_l2 = .5) %>%
@@ -106,7 +108,7 @@ test_that("boost_tree with lightgbm",{
       fit(bill_length_mm ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_3 <-
       predict(pars_fit_3, penguins)
   })
@@ -130,7 +132,7 @@ test_that("boost_tree with lightgbm",{
   # classification -------------------------------------------------------------
 
   # multiclass
-  expect_error_free({
+  expect_no_error({
     pars_fit_4 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -138,7 +140,7 @@ test_that("boost_tree with lightgbm",{
       fit(species ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_4 <-
       predict(pars_fit_4, penguins, type = "prob")
     pars_preds_raw_4 <-
@@ -196,7 +198,7 @@ test_that("boost_tree with lightgbm",{
   expect_equal(pars_preds_5, lgbm_preds_5)
 
   # classification on a two-level outcome
-  expect_error_free({
+  expect_no_error({
     pars_fit_6 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -204,7 +206,7 @@ test_that("boost_tree with lightgbm",{
       fit(sex ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_6 <-
       predict(pars_fit_6, penguins, type = "prob")
     pars_preds_raw_6 <-
@@ -261,7 +263,7 @@ test_that("bonsai applies dataset parameters (#77)", {
   penguins <- penguins[complete.cases(penguins),]
 
   # regression -----------------------------------------------------------------
-  expect_error_free({
+  expect_no_error({
     pars_fit_1 <-
       boost_tree() %>%
       set_engine("lightgbm", linear_tree = TRUE) %>%
@@ -269,7 +271,7 @@ test_that("bonsai applies dataset parameters (#77)", {
       fit(bill_length_mm ~ ., data = penguins)
   })
 
-  expect_error_free({
+  expect_no_error({
     pars_preds_1 <-
       predict(pars_fit_1, penguins)
   })
@@ -322,7 +324,7 @@ test_that("bonsai correctly determines objective when label is a factor", {
     data("penguins", package = "modeldata")
     penguins <- penguins[complete.cases(penguins),]
 
-    expect_error_free({
+    expect_no_error({
         bst <- train_lightgbm(
             x = penguins[, c("bill_length_mm", "bill_depth_mm")],
             y = penguins[["sex"]],
@@ -333,7 +335,7 @@ test_that("bonsai correctly determines objective when label is a factor", {
     expect_equal(bst$params$objective, "binary")
     expect_equal(bst$params$num_class, 1)
 
-    expect_error_free({
+    expect_no_error({
         bst <- train_lightgbm(
             x = penguins[, c("bill_length_mm", "bill_depth_mm")],
             y = penguins[["species"]],
@@ -354,7 +356,7 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
   penguins <- penguins[complete.cases(penguins),]
 
   # supply no mtry
-  expect_error_free({
+  expect_no_error({
     pars_fit_1 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -368,7 +370,7 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
   )
 
   # supply mtry = 1 (edge cases)
-  expect_error_free({
+  expect_no_error({
     pars_fit_2 <-
       boost_tree(mtry = 1) %>%
       set_engine("lightgbm", counts = TRUE) %>%
@@ -381,7 +383,7 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
     1 / (ncol(penguins) - 1)
   )
 
-  expect_error_free({
+  expect_no_error({
     pars_fit_3 <-
       boost_tree(mtry = 1) %>%
       set_engine("lightgbm", counts = FALSE) %>%
@@ -395,7 +397,7 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
   )
 
   # supply a count (with default counts = TRUE)
-  expect_error_free({
+  expect_no_error({
     pars_fit_4 <-
       boost_tree(mtry = 3) %>%
       set_engine("lightgbm") %>%
@@ -429,13 +431,13 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
   # supply a feature fraction argument rather than mtry
   # TODO: is there any way to extend parsnip's warning here to
   # point users to mtry?
-  expect_warning({
+  # will see "The argument `feature_fraction_bynode` cannot be..." (#95)
+  suppressWarnings(
     pars_fit_7 <-
       boost_tree() %>%
       set_engine("lightgbm", feature_fraction_bynode = .5) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins)},
-    "manually modified and were removed: feature_fraction_bynode."
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
   expect_equal(
@@ -443,23 +445,22 @@ test_that("bonsai handles mtry vs mtry_prop gracefully", {
     1
   )
 
-  # supply both feature fraction and mtry
-  expect_snapshot({
+  # supply both feature fraction and mtry (#95)
+  suppressWarnings(expect_error({
     pars_fit_8 <-
       boost_tree(mtry = .5) %>%
       set_engine("lightgbm", feature_fraction_bynode = .5) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins)},
-    error = TRUE
-  )
+      fit(bill_length_mm ~ ., data = penguins)
+  }))
 
-  expect_warning({
+  # will see "The argument `feature_fraction_bynode` cannot be..." (#95)
+  suppressWarnings(
     pars_fit_9 <-
       boost_tree(mtry = 2) %>%
       set_engine("lightgbm", feature_fraction_bynode = .5) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins)},
-    "manually modified and were removed: feature_fraction_bynode."
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
   expect_equal(
@@ -480,7 +481,7 @@ test_that("tuning mtry vs mtry_prop", {
   set.seed(1)
 
   suppressMessages(
-    expect_error_free({
+    expect_no_error({
       gbm_tune <- tune::tune_grid(
         boost_tree(mtry = tune::tune()) %>%
           set_engine("lightgbm") %>%
@@ -515,35 +516,33 @@ test_that("training wrapper warns on protected arguments", {
 
   penguins <- penguins[complete.cases(penguins),]
 
-  expect_warning(
-    boost_tree() %>%
+  expect_snapshot(
+    .res <- boost_tree() %>%
       set_engine("lightgbm", colnames = paste0("X", 1:ncol(penguins))) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins),
-    "guarded by bonsai.*colnames"
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_warning(
-    boost_tree() %>%
+  expect_snapshot(
+    .res <- boost_tree() %>%
       set_engine(
         "lightgbm",
         colnames = paste0("X", 1:ncol(penguins)),
         callbacks = list(p = print)
       ) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins),
-    "guarded by bonsai.*colnames, callbacks"
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_warning(
-    boost_tree() %>%
+  expect_snapshot(
+    .res <-
+      boost_tree() %>%
       set_engine(
         "lightgbm",
         colnames = paste0("X", 1:ncol(penguins))
       ) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins),
-    "guarded by bonsai.*colnames"
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
   expect_snapshot(
@@ -587,7 +586,7 @@ test_that("training wrapper passes stop_iter correctly", {
 
   penguins <- penguins[complete.cases(penguins),]
 
-  expect_error_free(
+  expect_no_error(
     pars_fit_1 <-
       boost_tree(stop_iter = 10) %>%
       set_engine("lightgbm") %>%
@@ -595,16 +594,16 @@ test_that("training wrapper passes stop_iter correctly", {
       fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_warning(
+  # will see "The argument `early_stopping_round` cannot be..." (#95)
+  suppressWarnings(
     pars_fit_2 <-
       boost_tree() %>%
       set_engine("lightgbm", early_stopping_round = 10) %>%
       set_mode("regression") %>%
-      fit(bill_length_mm ~ ., data = penguins),
-    "were removed: early_stopping_round"
+      fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_error_free(
+  expect_no_error(
     pars_fit_3 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -612,7 +611,7 @@ test_that("training wrapper passes stop_iter correctly", {
       fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_error_free(
+  expect_no_error(
     pars_fit_4 <-
       boost_tree() %>%
       set_engine("lightgbm", validation = .2) %>%
@@ -620,7 +619,7 @@ test_that("training wrapper passes stop_iter correctly", {
       fit(bill_length_mm ~ ., data = penguins)
   )
 
-  expect_error_free(
+  expect_no_error(
     pars_fit_5 <-
       boost_tree(stop_iter = 10) %>%
       set_engine("lightgbm", validation = .2) %>%
@@ -701,7 +700,7 @@ test_that("multi_predict() predicts classes if 'type' not given ", {
     num_iterations <- 5
 
     # classification (multiclass) ------------------------------------------------
-    expect_error_free({
+    expect_no_error({
         clf_multiclass_fit <-
             boost_tree(trees = num_iterations) %>%
             set_engine("lightgbm") %>%
@@ -732,7 +731,7 @@ test_that("multi_predict() predicts classes if 'type' not given ", {
     expect_true(all(as.character(pred_tbl[[".pred_class"]]) %in% levels(penguins[["species"]])))
 
     # classification (binary) ------------------------------------------------
-    expect_error_free({
+    expect_no_error({
         clf_binary_fit <-
             boost_tree(trees = num_iterations) %>%
             set_engine("lightgbm") %>%
@@ -780,7 +779,7 @@ test_that("lightgbm with case weights", {
   penguins_wts <- runif(nrow(penguins))
 
   # regression -----------------------------------------------------------------
-  expect_error_free({
+  expect_no_error({
     pars_fit_1 <-
       boost_tree() %>%
       set_engine("lightgbm") %>%
@@ -824,4 +823,41 @@ test_that("lightgbm with case weights", {
   lgbm_preds_1 <- predict(lgbm_fit_1, peng_m)
 
   expect_equal(pars_preds_1$.pred, lgbm_preds_1)
+})
+
+test_that("sparse data with lightgbm",{
+  skip_on_cran()
+  skip_if_not_installed("lightgbm")
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("Matrix")
+
+  library(Matrix)
+  library(dplyr)
+
+  hep <- modeldata::hepatic_injury_qsar
+
+  lgb_spec <- boost_tree() %>% set_mode("classification") %>% set_engine("lightgbm")
+
+  # ------------------------------------------------------------------------------
+
+  hepatic_x_sp <- as.matrix(hep[,-1])
+  hepatic_x_sp <- as(hepatic_x_sp, "sparseMatrix")
+
+  sprs_fit <- fit_xy(lgb_spec, hepatic_x_sp, hep$class)
+  sprs_prob <- predict(sprs_fit, new_data = hepatic_x_sp, type = "prob")
+  sprs_cls <- predict(sprs_fit, new_data = hepatic_x_sp, type = "class")
+
+  # ------------------------------------------------------------------------------
+
+  hepatic_x <- hep[,-1]
+
+  dens_fit <- fit_xy(lgb_spec, hepatic_x, hep$class)
+  dens_prob <- predict(dens_fit, new_data = hepatic_x, type = "prob")
+  dens_cls <- predict(dens_fit, new_data = hepatic_x, type = "class")
+
+  # ------------------------------------------------------------------------------
+
+  # very small differences in lightgbm probabilities
+  expect_equal(sprs_prob, dens_prob, tolerance = .001)
+  expect_equal(sprs_cls, dens_cls)
 })
