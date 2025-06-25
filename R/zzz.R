@@ -7,11 +7,12 @@
 .onLoad <- function(libname, pkgname) {
   make_boost_tree_lightgbm()
 
+  make_boost_tree_catboost()
+
   make_decision_tree_partykit()
   make_rand_forest_partykit()
 
   make_rand_forest_aorsf()
 }
-
 
 # nocov end

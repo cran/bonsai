@@ -1,58 +1,57 @@
 # nocov start
 
-make_boost_tree_lightgbm <- function() {
+make_boost_tree_catboost <- function() {
   parsnip::set_model_engine(
     model = "boost_tree",
     mode = "regression",
-    eng = "lightgbm"
+    eng = "catboost"
   )
 
   parsnip::set_model_engine(
     model = "boost_tree",
     mode = "classification",
-    eng = "lightgbm"
+    eng = "catboost"
   )
 
   parsnip::set_dependency(
     model = "boost_tree",
-    eng = "lightgbm",
-    pkg = "lightgbm",
+    eng = "catboost",
+    pkg = "catboost",
     mode = "regression"
   )
 
   parsnip::set_dependency(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     pkg = "bonsai",
     mode = "regression"
   )
 
   parsnip::set_dependency(
     model = "boost_tree",
-    eng = "lightgbm",
-    pkg = "lightgbm",
+    eng = "catboost",
+    pkg = "catboost",
     mode = "classification"
   )
 
   parsnip::set_dependency(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     pkg = "bonsai",
     mode = "classification"
   )
   parsnip::set_fit(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "regression",
     value = list(
       interface = "data.frame",
       protect = c("x", "y", "weights"),
-      func = c(pkg = "bonsai", fun = "train_lightgbm"),
+      func = c(pkg = "bonsai", fun = "train_catboost"),
       defaults = list(
-        verbose = -1,
-        num_threads = 0,
-        seed = quote(sample.int(10^5, 1)),
-        deterministic = TRUE
+        thread_count = 1,
+        allow_writing_files = FALSE,
+        random_seed = quote(sample.int(10^5, 1))
       )
     )
   )
@@ -60,24 +59,24 @@ make_boost_tree_lightgbm <- function() {
   parsnip::set_encoding(
     model = "boost_tree",
     mode = "regression",
-    eng = "lightgbm",
+    eng = "catboost",
     options = list(
       predictor_indicators = "none",
       compute_intercept = FALSE,
       remove_intercept = FALSE,
-      allow_sparse_x = TRUE
+      allow_sparse_x = FALSE
     )
   )
 
   parsnip::set_pred(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "regression",
     type = "numeric",
     value = list(
       pre = NULL,
       post = NULL,
-      func = c(pkg = "bonsai", fun = "predict_lightgbm_regression_numeric"),
+      func = c(pkg = "bonsai", fun = "predict_catboost_regression_numeric"),
       args = list(
         object = quote(object),
         new_data = quote(new_data)
@@ -87,17 +86,16 @@ make_boost_tree_lightgbm <- function() {
 
   parsnip::set_fit(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "classification",
     value = list(
       interface = "data.frame",
       protect = c("x", "y", "weights"),
-      func = c(pkg = "bonsai", fun = "train_lightgbm"),
+      func = c(pkg = "bonsai", fun = "train_catboost"),
       defaults = list(
-        verbose = -1,
-        num_threads = 0,
-        seed = quote(sample.int(10^5, 1)),
-        deterministic = TRUE
+        thread_count = 1,
+        allow_writing_files = FALSE,
+        random_seed = quote(sample.int(10^5, 1))
       )
     )
   )
@@ -105,24 +103,24 @@ make_boost_tree_lightgbm <- function() {
   parsnip::set_encoding(
     model = "boost_tree",
     mode = "classification",
-    eng = "lightgbm",
+    eng = "catboost",
     options = list(
       predictor_indicators = "none",
       compute_intercept = FALSE,
       remove_intercept = FALSE,
-      allow_sparse_x = TRUE
+      allow_sparse_x = FALSE
     )
   )
 
   parsnip::set_pred(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "classification",
     type = "class",
     value = parsnip::pred_value_template(
       pre = NULL,
       post = NULL,
-      func = c(pkg = "bonsai", fun = "predict_lightgbm_classification_class"),
+      func = c(pkg = "bonsai", fun = "predict_catboost_classification_class"),
       object = quote(object),
       new_data = quote(new_data)
     )
@@ -130,13 +128,13 @@ make_boost_tree_lightgbm <- function() {
 
   parsnip::set_pred(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "classification",
     type = "prob",
     value = parsnip::pred_value_template(
       pre = NULL,
       post = NULL,
-      func = c(pkg = "bonsai", fun = "predict_lightgbm_classification_prob"),
+      func = c(pkg = "bonsai", fun = "predict_catboost_classification_prob"),
       object = quote(object),
       new_data = quote(new_data)
     )
@@ -144,13 +142,13 @@ make_boost_tree_lightgbm <- function() {
 
   parsnip::set_pred(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     mode = "classification",
     type = "raw",
     value = parsnip::pred_value_template(
       pre = NULL,
       post = NULL,
-      func = c(pkg = "bonsai", fun = "predict_lightgbm_classification_raw"),
+      func = c(pkg = "bonsai", fun = "predict_catboost_classification_raw"),
       object = quote(object),
       new_data = quote(new_data)
     )
@@ -158,25 +156,25 @@ make_boost_tree_lightgbm <- function() {
 
   parsnip::set_model_arg(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     parsnip = "tree_depth",
-    original = "max_depth",
+    original = "depth",
     func = list(pkg = "dials", fun = "tree_depth"),
     has_submodel = FALSE
   )
 
   parsnip::set_model_arg(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     parsnip = "trees",
-    original = "num_iterations",
+    original = "iterations",
     func = list(pkg = "dials", fun = "trees"),
     has_submodel = TRUE
   )
 
   parsnip::set_model_arg(
     model = "boost_tree",
-    eng = "lightgbm",
+    eng = "catboost",
     parsnip = "learn_rate",
     original = "learning_rate",
     func = list(pkg = "dials", fun = "learn_rate"),
@@ -185,46 +183,10 @@ make_boost_tree_lightgbm <- function() {
 
   parsnip::set_model_arg(
     model = "boost_tree",
-    eng = "lightgbm",
-    parsnip = "mtry",
-    original = "feature_fraction_bynode",
-    func = list(pkg = "dials", fun = "mtry"),
-    has_submodel = FALSE
-  )
-
-  parsnip::set_model_arg(
-    model = "boost_tree",
-    eng = "lightgbm",
-    parsnip = "min_n",
-    original = "min_data_in_leaf",
-    func = list(pkg = "dials", fun = "min_n"),
-    has_submodel = FALSE
-  )
-
-  parsnip::set_model_arg(
-    model = "boost_tree",
-    eng = "lightgbm",
-    parsnip = "loss_reduction",
-    original = "min_gain_to_split",
-    func = list(pkg = "dials", fun = "loss_reduction"),
-    has_submodel = FALSE
-  )
-
-  parsnip::set_model_arg(
-    model = "boost_tree",
-    eng = "lightgbm",
-    parsnip = "sample_size",
-    original = "bagging_fraction",
-    func = list(pkg = "dials", fun = "sample_size"),
-    has_submodel = FALSE
-  )
-
-  parsnip::set_model_arg(
-    model = "boost_tree",
-    eng = "lightgbm",
-    parsnip = "stop_iter",
-    original = "early_stopping_round",
-    func = list(pkg = "dials", fun = "stop_iter"),
+    eng = "catboost",
+    parsnip = "mtry_prop",
+    original = "rsm",
+    func = list(pkg = "dials", fun = "mtry_prop"),
     has_submodel = FALSE
   )
 }

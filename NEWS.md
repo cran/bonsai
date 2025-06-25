@@ -1,3 +1,21 @@
+# bonsai 0.4.0
+
+## New Engines
+
+* Added catboost engine to `boost_tree()` (#70).
+
+## Improvements
+
+* The lightgbm engine now warns that arguments passed to `params` argument in `set_engine()` are ignored (#110).
+
+* Automatic handling of `num_classes` argument when specifying a multiclass classification objective for the lightgbm engine (#109).
+
+* Increased the minimum R version to R 4.1.
+
+## Bug Fixes
+
+* Fixed bug where `num_threads` argument were ignored for lightgbm engine (#105).
+
 # bonsai 0.3.2
 
 * Resolves a test failure ahead of an upcoming parsnip release (#95).
