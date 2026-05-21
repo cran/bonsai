@@ -1,3 +1,13 @@
+# bonsai 0.4.1
+
+## Bug Fixes
+
+* Added `multi_predict()` method for catboost engine, enabling efficient tuning of the `trees` parameter (#115).
+
+* catboost tuning parameters were updates: (#119)
+  - Fixed a bug in `mtry`; it used the parsnip name `mtry_prop`.
+  - Enabled model arguments for `min_n`, `sample_size`, and `stop_iter`. `min_n` is only enabled for GPU computations. 
+  
 # bonsai 0.4.0
 
 ## New Engines
